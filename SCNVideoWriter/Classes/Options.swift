@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SceneKit
 import AVFoundation
 
 extension SCNVideoWriter {
@@ -22,22 +23,28 @@ extension SCNVideoWriter {
     public static var `default`: Options {
       return Options(timeScale: 600,
                      renderSize: CGSize(width: 640, height: 640),
-                     videoSize: CGSize(width: 1280, height: 720),
-                     fps: 60,
+                     videoSize: CGSize(width: 720, height: 1280),
+                     fps: 30,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),
                      fileType: AVFileType.m4v.rawValue,
                      codec: AVVideoCodecH264,
                      deleteFileIfExists: true)
     }
     
-    var assetWriterInputSettings: [String : Any] {
+    public static func defaults(with screenSize: CGSize) -> Options {
+        var options = Options.default
+        options.renderSize = screenSize
+        return options
+    }
+    
+    public var assetWriterInputSettings: [String : Any] {
       return [
         AVVideoCodecKey: codec,
         AVVideoWidthKey: videoSize.width,
         AVVideoHeightKey: videoSize.height
       ]
     }
-    var sourcePixelBufferAttributes: [String : Any] {
+    public var sourcePixelBufferAttributes: [String : Any] {
       return [
         kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32ARGB),
         kCVPixelBufferWidthKey as String: videoSize.width,
@@ -46,4 +53,5 @@ extension SCNVideoWriter {
     }
   }
 }
+
 
